@@ -1,21 +1,3 @@
-/*
- * PAC-MAN — OpenGL / GLUT (C++)
- * FIXED VERSION:
- *   1. Pac-Man is yellow
- *   2. Power pellet no longer makes Pac-Man disappear
- *   3. Game gradually speeds up as pellets are eaten
- *   4. Ghost spawns inside ghost house, bobs, then exits and roams
- *
- * Compile:
- *   Linux:   g++ pacman_fixed.cpp -o pacman -lGL -lGLU -lglut -lm
- *   macOS:   g++ pacman_fixed.cpp -o pacman -framework OpenGL -framework GLUT -Wno-deprecated
- *   Windows: g++ pacman_fixed.cpp -o pacman -lfreeglut -lopengl32 -lglu32
- *
- * Controls: Arrow Keys OR WASD
- *           SPACE to start/restart
- *           ESC to exit
- */
-
 
 #include <windows.h>
 #include <GL/glut.h>
@@ -27,7 +9,6 @@
 #include <vector>
 #include <string>
 
-// ─── Constants ───────────────────────────────────────────────────────────────
 static const int COLS       = 28;
 static const int ROWS       = 31;
 static const int CELL       = 20;
@@ -35,7 +16,6 @@ static const int WIN_W      = COLS * CELL;
 static const int WIN_H      = ROWS * CELL;
 static const float PI       = 3.14159265f;
 
-// ─── Maze definition ─────────────────────────────────────────────────────────
 static const char* MAP[ROWS] = {
     "############################",
     "#............##............#",
@@ -70,7 +50,6 @@ static const char* MAP[ROWS] = {
     "############################",
 };
 
-// ─── Types ───────────────────────────────────────────────────────────────────
 struct Color { float r, g, b; };
 
 enum GameState { STATE_IDLE, STATE_PLAYING, STATE_DEAD, STATE_WIN };
@@ -176,14 +155,8 @@ static void drawCircle(float cx, float cy, float radius, int segs = 24) {
     glEnd();
 }
 
-// FIX 2: drawPacman now clamps mouth so the arc never wraps around.
-// The original code used mouthAngle as a fraction of PI (e.g. 0.25 * PI).
-// When mouthAngle itself grew past 1.0 the start/end angles crossed and the
-// fan flipped, making Pac-Man invisible.  We now multiply by PI *inside*
-// the function so the passed value is always a small radian offset.
 static void drawPacman(float cx, float cy, float r, float mouth, float facing) {
-    // mouth is in [MOUTH_MIN, MOUTH_MAX] — scale to a real angle
-    float mRad = mouth * PI;           // e.g. 0.25 * PI ≈ 45°
+    float mRad = mouth * PI;           
     glBegin(GL_TRIANGLE_FAN);
     glVertex2f(cx, cy);
     int segs = 32;
@@ -865,12 +838,6 @@ int main(int argc, char** argv) {
     glutTimerFunc(16, timer, 0);
 
     printf("\n========================================\n");
-    printf("  PAC-MAN (FIXED)\n");
-    printf("  Fixes applied:\n");
-    printf("  1. Pac-Man is now YELLOW\n");
-    printf("  2. Power pellet no longer hides Pac-Man\n");
-    printf("  3. Game speeds up as you eat pellets\n");
-    printf("  4. Ghost exits house and roams randomly\n");
     printf("\n  Arrow Keys or WASD to move\n");
     printf("  SPACE to start  |  ESC to quit\n");
     printf("========================================\n\n");
